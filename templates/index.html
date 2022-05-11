@@ -14,6 +14,7 @@
 {% endblock %}
 {% if result %}
     {{ snippet | safe }}
+    <img src='data:image/png;base64,{{ colourbar | safe }}'/>
 {% endif %}
 </body>
 </html>

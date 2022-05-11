@@ -1,4 +1,5 @@
 import base64
+import os
 from io import BytesIO
 
 import meshio
@@ -19,7 +20,8 @@ def render_colourbar(limits):
     plane_mesh = pv.PolyData(plane).delaunay_2d()
     pl.add_mesh(plane_mesh, opacity=0.5, clim=limits, scalars=[0, 1, 2, 3])
     pl.clear()  # Discard mesh
-    pl.add_scalar_bar(title="Cp", height=0.8, width=0.8, position_x=0.1, position_y=0.1, label_font_size=24, title_font_size=32)
+    pl.add_scalar_bar(title="Cp", height=0.8, width=0.8, position_x=0.1, position_y=0.1, label_font_size=24,
+                      title_font_size=32)
     buf = BytesIO()
     pl.show(screenshot=buf)
     img = base64.b64encode(buf.getbuffer()).decode("ascii")
@@ -27,15 +29,23 @@ def render_colourbar(limits):
     return img
 
 
+def get_pre_selected():
+    return os.listdir("static/pre_selected")
+
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        return render_template('index.html', result=None)
+        return render_template('index.html', result=None, pre_selected=get_pre_selected())
     if request.method == 'POST':
-        file = request.files['file']
-        filename = file.filename
-        file.save(filename)
-        stl_file = filename
+        pre_selected = request.form['pre_file']
+        if pre_selected != "0":
+            stl_file = "static/pre_selected/" + pre_selected
+        else:
+            file = request.files['file']
+            filename = file.filename
+            file.save(filename)
+            stl_file = filename
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
         pred = predict(model, data)
@@ -51,4 +61,5 @@ def index():
         snippet = embed_snippet([pythreejs_renderer])
         colourbar = render_colourbar([min(cp), max(cp)])
 
-        return render_template('index.html', result=True, snippet=snippet, colourbar=colourbar)
+        return render_template('index.html', result=True, snippet=snippet, colourbar=colourbar,
+                               pre_selected=get_pre_selected())

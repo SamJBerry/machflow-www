@@ -8,9 +8,41 @@
 {% block inputs %}
     <form action="/" method="POST" enctype="multipart/form-data">
         <input type="file" name="file">
-        <input type="text" name="aoa">
-        <input type="submit">
+        <select name="pre_file">
+            <option value="0">Pre select</option>
+            {% for file in pre_selected %}
+                <option vale="{{ file }}">{{ file }}</option>
+            {% endfor %}
+        </select>
+        <label for="aoa" value="AoA"></label>
+        <input type="text" name="aoa" id="aoa" value="0">
+        <input type="submit" value="Submit">
     </form>
+    <h1>MachFlow 2022</h1>
+    <p>
+        <b>MachFlow is a graph based neural network to predict the pressure coefficient over an arbitrary 3d surface,
+            specifically trained against 3d wings</b>
+    </p>
+    <p>
+        <b>If you are here that's because you've been given early access to this web demo before it is complete. Most
+            things on the web interface have no error checking </b>
+    </p>
+    <ol>
+        <li>Select from the list or load your own .stl (see limitations)</li>
+        <li>Enter an integer in the field for your angle of attack</li>
+        <li>Submit and wait for results (if more than 30 seconds it has likely fallen over with too big an .stl)</li>
+    </ol>
+    <p><h2>Existing limitations</h2>
+    <ul>
+        <li>For this demo all predictions are made at M0.7</li>
+        <li>The .stl file must contain enough vertices to solve against. If you want to try this use subdivide in
+            blender and export
+        </li>
+        <li>Due to the memory limitations on the server (I'm not made of money) large .stl files (>5Mb) will not produce
+            results and may crash the server. Please be kind
+        </li>
+        <li>Force coefficient calculations to come on the web interface soon</li>
+    </ul></p>
 {% endblock %}
 {% if result %}
     {{ snippet | safe }}

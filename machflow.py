@@ -1,6 +1,9 @@
+import json
+
 import meshio
 import pyvista as pv
 from flask import Flask, request, render_template
+from ipywidgets.embed import embed_data, embed_snippet
 
 from network import load_stl, load_model, predict
 
@@ -27,9 +30,7 @@ def index():
         plane_mesh = pv.PolyData(plane).delaunay_2d()
         pl.add_mesh(plane_mesh, opacity=0.5)
         pl.add_mesh(mesh)
-        pl.export_html('pyvista.html')
-        f = open('pyvista.html', "r")
-        lines = f.read()
-        f.close()
+        pythreejs_renderer = pl.to_pythreejs()
+        snippet = embed_snippet([pythreejs_renderer])
 
-        return lines
+        return render_template('index.html', result=True, snippet=snippet)

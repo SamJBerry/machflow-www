@@ -5,12 +5,15 @@
     <title>Mach Flow</title>
 </head>
 <body>
-    {% block inputs %}
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <input type="text" name="aoa">
-            <input type="submit">
-        </form>
-    {% endblock %}
+{% block inputs %}
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="text" name="aoa">
+        <input type="submit">
+    </form>
+{% endblock %}
+{% if result %}
+    {{ snippet | safe }}
+{% endif %}
 </body>
 </html>

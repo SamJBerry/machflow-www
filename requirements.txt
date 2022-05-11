@@ -1,0 +1,9 @@
+flask
+torch
+meshio
+-f https://data.pyg.org/whl/torch-1.11.0+cpu.html
+torch-scatter
+torch-sparse
+torch-cluster
+torch-spline-conv
+torch-geometric

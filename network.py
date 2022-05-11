@@ -1,4 +1,5 @@
 import meshio
+import numpy as np
 import torch
 import torch.nn.functional as F
 import torch_geometric.nn as gnn
@@ -64,7 +65,7 @@ def load_model():
 
 
 def predict(model, input_data):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     with torch.autocast(device_type=device):
         prediction = model(input_data)
     return prediction

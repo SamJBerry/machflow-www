@@ -46,7 +46,7 @@ def index():
             filename = file.filename
             file.save(filename)
             stl_file = filename
-        data = load_stl(stl_file, int(request.form['aoa']))
+        data = load_stl(stl_file, int(request.form['aoa']), int(request.form['u_inf']))
         model = load_model()
         pred = predict(model, data)
         cp = pred.cpu().detach().float().numpy()[:, 0]

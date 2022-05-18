@@ -12,16 +12,16 @@ class GCN(torch.nn.Module):
         super().__init__()
         self.convs = torch.nn.ModuleList(
             [
-                gnn.GENConv(4, 8, learn_p=True, learn_t=True),
-                gnn.GENConv(12, 16, learn_p=True, learn_t=True),
-                gnn.GENConv(20, 32, learn_p=True, learn_t=True),
-                gnn.GENConv(36, 64, learn_p=True, learn_t=True),
-                gnn.GENConv(68, 32, learn_p=True, learn_t=True),
-                gnn.GENConv(36, 16, learn_p=True, learn_t=True),
-                gnn.GENConv(20, 8, learn_p=True, learn_t=True),
+                gnn.GENConv(5, 8, learn_p=True, learn_t=True),
+                gnn.GENConv(13, 16, learn_p=True, learn_t=True),
+                gnn.GENConv(21, 32, learn_p=True, learn_t=True),
+                gnn.GENConv(37, 64, learn_p=True, learn_t=True),
+                gnn.GENConv(69, 32, learn_p=True, learn_t=True),
+                gnn.GENConv(37, 16, learn_p=True, learn_t=True),
+                gnn.GENConv(21, 8, learn_p=True, learn_t=True),
             ]
         )
-        self.final_conv = gnn.SAGEConv(12, 1)
+        self.final_conv = gnn.SAGEConv(13, 1)
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
@@ -34,9 +34,10 @@ class GCN(torch.nn.Module):
         return x
 
 
-def load_stl(stl_path, aoa=0):
+def load_stl(stl_path, aoa=0, u_inf=10):
     """
 
+    :param u_inf:
     :param stl_path:
     :param aoa:
     :return: meshio mesh, full data tensor
@@ -52,8 +53,9 @@ def load_stl(stl_path, aoa=0):
     trans(data)
 
     aoa_tensor = torch.tensor(np.array([aoa] * data.pos.shape[0]))[:, None]
+    u_inf_tensor = torch.tensor(np.array([u_inf] * data.pos.shape[0]))[:, None]
 
-    data.x = torch.cat((data.pos, aoa_tensor), 1).float()
+    data.x = torch.cat((data.pos, aoa_tensor, u_inf_tensor), 1).float()
     return data
 
 

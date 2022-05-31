@@ -5,12 +5,18 @@ from io import BytesIO
 
 import meshio
 import pyvista as pv
+import werkzeug.exceptions
 from flask import Flask, request, render_template
 from ipywidgets.embed import embed_snippet
-
+from werkzeug.utils import secure_filename
 from network import load_stl, load_model, predict
 
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'stl'}
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 10 * 10**6  # 10Mb upload limit
 
 
 def render_colourbar(limits):
@@ -34,6 +40,16 @@ def get_pre_selected():
     return os.listdir("static/pre_selected")
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+class FileNotAllowed(werkzeug.exceptions.HTTPException):
+    code = 406
+    description = f"The request file is not in the allowed extension list: {ALLOWED_EXTENSIONS}"
+
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
@@ -43,11 +59,15 @@ def index():
         if pre_selected != "0":
             stl_file = "static/pre_selected/" + pre_selected
             app.logger.info(f"Using existing stl: {stl_file}")
-        else:
+        elif allowed_file(request.files['file'].filename):
             file = request.files['file']
-            stl_file = file.filename
+            filename = secure_filename(file.filename)
+            stl_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(stl_file)
-            app.logger.info(f"File uploaded: {stl_file}")
+            app.logger.info(f"File uploaded: {file.filename}")
+        else:
+            raise FileNotAllowed()
+
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
         pred = predict(model, data)

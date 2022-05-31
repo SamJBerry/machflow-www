@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+from time import time
 from io import BytesIO
 
 import meshio
@@ -16,7 +17,7 @@ ALLOWED_EXTENSIONS = {'stl'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 10 * 10**6  # 10Mb upload limit
+app.config['MAX_CONTENT_LENGTH'] = 10 * 10 ** 6  # 10Mb upload limit
 
 
 def render_colourbar(limits):
@@ -70,7 +71,11 @@ def index():
 
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
+        tick = time()
         pred = predict(model, data)
+        tock = time()
+        prediction_time = tock - tick
+        app.logger.info(f"Prediction made in {prediction_time}")
         cp = pred.cpu().detach().float().numpy()[:, 0]
         mesh = meshio.read(stl_file)
         mesh.point_data['Cp'] = cp
@@ -84,7 +89,7 @@ def index():
         colourbar = render_colourbar([min(cp), max(cp)])
 
         return render_template('index.html', result=True, snippet=snippet, colourbar=colourbar,
-                               pre_selected=get_pre_selected())
+                               pre_selected=get_pre_selected(), prediction_time=prediction_time)
 
 
 if __name__ == "__main__":

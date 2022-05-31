@@ -20,12 +20,13 @@
     </form>
     <h1>MachFlow 2022</h1>
     <p>
-        <b>MachFlow is a graph based neural network to predict the pressure coefficient over an arbitrary 3d surface,
-            specifically trained against 3d wings</b>
+        <b>MachFlow is a graph convolutional neural network to predict the pressure coefficient over an arbitrary 3D
+            surface,
+            specifically trained against 3d wings. To the best of my knowledge it is the first work applying GCNNs to 3D
+            aerodynamic problems</b>
     </p>
     <p>
-        <b>If you are here that's because you've been given early access to this web demo before it is complete. Most
-            things on the web interface have no error checking </b>
+        <b>The predictions produced here are run in realtime on the neural net on an AWS EC2 instance</b>
     </p>
     <ol>
         <li>Select from the list or load your own .stl (see limitations)</li>
@@ -44,6 +45,9 @@
     </ul></p>
 {% endblock %}
 {% if result %}
+    <b>Prediction made in {{ prediction_time|round(2) }} secs.</b>
+    <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU node would likely take {{ prediction_time|round(2) * 85  }} secs to
+        converge</p>
     {{ snippet | safe }}
     <img src='data:image/png;base64,{{ colourbar | safe }}'/>
 {% endif %}

@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 from io import BytesIO
 
@@ -41,11 +42,12 @@ def index():
         pre_selected = request.form['pre_file']
         if pre_selected != "0":
             stl_file = "static/pre_selected/" + pre_selected
+            app.logger.info(f"Using existing stl: {stl_file}")
         else:
             file = request.files['file']
-            filename = file.filename
-            file.save(filename)
-            stl_file = filename
+            stl_file = file.filename
+            file.save(stl_file)
+            app.logger.info(f"File uploaded: {stl_file}")
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
         pred = predict(model, data)
@@ -63,3 +65,17 @@ def index():
 
         return render_template('index.html', result=True, snippet=snippet, colourbar=colourbar,
                                pre_selected=get_pre_selected())
+
+
+if __name__ == "__main__":
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.addHandler(gunicorn_logger.handlers)
+    app.logger.setLevel(gunicorn_logger.level)
+    app.run()
+
+    # Required for headless image buffering on Linux
+    try:
+        app.logger.info("Starting Xvfb")
+        pv.start_xvfb()
+    except OSError:
+        pass

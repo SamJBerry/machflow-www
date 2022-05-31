@@ -19,6 +19,18 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 10 ** 6  # 10Mb upload limit
 
+# Logging
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.addHandler(gunicorn_logger.handlers)
+app.logger.setLevel(gunicorn_logger.level)
+
+# Required for headless image buffering on Linux
+try:
+    app.logger.info("Starting Xvfb")
+    pv.start_xvfb()
+except OSError:
+    pass
+
 
 def render_colourbar(limits):
     pl = pv.Plotter(window_size=[1024, 256], off_screen=True)
@@ -93,14 +105,4 @@ def index():
 
 
 if __name__ == "__main__":
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.addHandler(gunicorn_logger.handlers)
-    app.logger.setLevel(gunicorn_logger.level)
     app.run()
-
-    # Required for headless image buffering on Linux
-    try:
-        app.logger.info("Starting Xvfb")
-        pv.start_xvfb()
-    except OSError:
-        pass

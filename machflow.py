@@ -21,7 +21,7 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 10 ** 6  # 10Mb upload limit
 
 # Logging
 gunicorn_logger = logging.getLogger('gunicorn.error')
-app.logger.addHandler(gunicorn_logger.handlers)
+app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
 # Required for headless image buffering on Linux

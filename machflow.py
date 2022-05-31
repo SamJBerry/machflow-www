@@ -63,6 +63,11 @@ class FileNotAllowed(werkzeug.exceptions.HTTPException):
     description = f"The request file is not in the allowed extension list: {ALLOWED_EXTENSIONS}"
 
 
+class OOM(werkzeug.exceptions.HTTPException):
+    code = 503
+    description = "The server is out of memory due to excessive load. Please try again later"
+
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
@@ -84,7 +89,10 @@ def index():
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
         tick = time()
-        pred = predict(model, data)
+        try:
+            pred = predict(model, data)
+        except RuntimeError:
+            raise OOM()
         tock = time()
         prediction_time = tock - tick
         app.logger.info(f"Prediction made in {prediction_time}")

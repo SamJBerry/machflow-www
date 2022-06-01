@@ -5,34 +5,35 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
-    <div class="container">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mach Flow</title>
-</head>
-<body>
-{% block inputs %}
-    <form action="/" method="POST" enctype="multipart/form-data" class="row row-cols-lg-auto g-3 align-items-center">
-        <div class="col-12">
-            <input type="file" name="file">
-        </div>
-        <div class="col-12">
-            <select name="pre_file">
-                <option value="0">Pre select</option>
-                {% for file in pre_selected %}
-                    <option vale="{{ file }}">{{ file }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-12">
-            <label for="aoa" value="AoA"></label></div>
-        <div class="col-12">
-            <input type="text" name="aoa" id="aoa" value="0"></div>
-        <div class="col-12">
-            <input type="submit" value="Submit"></div>
-    </form>
-    <h1>MachFlow 2022</h1>
+<div class="container">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Mach Flow</title>
+    </head>
+    <body>
+    {% block inputs %}
+        <form action="/" method="POST" enctype="multipart/form-data"
+              class="row row-cols-lg-auto g-3 align-items-center">
+            <div class="col-12">
+                <input type="file" name="file">
+            </div>
+            <div class="col-12">
+                <select name="pre_file">
+                    <option value="0">Pre select</option>
+                    {% for file in pre_selected %}
+                        <option vale="{{ file }}">{{ file }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <label for="aoa" value="AoA"></label></div>
+            <div class="col-12">
+                <input type="text" name="aoa" id="aoa" value="0"></div>
+            <div class="col-12">
+                <input type="submit" value="Submit"></div>
+        </form>
+        <h1>MachFlow 2022</h1>
 
         <p>
             <b>MachFlow is a graph convolutional neural network to predict the pressure coefficient over an arbitrary 3D
@@ -63,15 +64,15 @@
             <li>Force coefficient calculations to come on the web interface soon</li>
         </ul>
         </p>
-    </div>
-{% endblock %}
-{% if result %}
-    <b>Prediction made in {{ prediction_time|round(2) }} secs.</b>
-    <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU
-        node would likely take {{ prediction_time|round(2) * 85 }} secs to
-        converge</p>
-    {{ snippet | safe }}
-    <img src='data:image/png;base64,{{ colourbar | safe }}'/>
-{% endif %}
+    {% endblock %}
+    {% if result %}
+        <b>Prediction made in {{ prediction_time|round(2) }} secs.</b>
+        <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU
+            node would likely take {{ prediction_time|round(2) * 85 }} secs to
+            converge</p>
+        {{ snippet | safe }}
+        <img src='data:image/png;base64,{{ colourbar | safe }}'/>
+    {% endif %}
 </body>
+</div>
 </html>

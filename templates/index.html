@@ -24,6 +24,10 @@
         {% endif %}
     {% endwith %}
     {% block inputs %}
+        <h1>MachFlow - Sam Berry 2022</h1>
+        <p><a href="https://www.linkedin.com/in/samjberry/">Linkedin</a> <a
+                href="https://github.com/SamJBerry/machflow-www">GitHub</a> <a href="mailto:sam+machflow@berrys.me">Email</a>
+        </p>
         <form action="/" method="POST" enctype="multipart/form-data"
               class="row row-cols-lg-auto g-3 align-items-center">
             <div class="col-12">
@@ -49,9 +53,6 @@
             let width = window.innerWidth
             document.getElementById("width").value = width
         </script>
-        <h1>MachFlow - Sam Berry 2022</h1>
-        <p><a href="https://www.linkedin.com/in/samjberry/">Linkedin</a>    <a href="https://github.com/SamJBerry/machflow-www">GitHub</a>    <a href="mailto:sam+machflow@berrys.me">Email</a></p>
-
         <p>
             <b>MachFlow is a graph convolutional neural network to predict the pressure coefficient over an arbitrary 3D
                 surface,
@@ -87,8 +88,10 @@
         <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU
             node would likely take 5 minutes to
             converge around 3,000 times slower!</p>
+        <div style="text-align: center;">
         {{ snippet | safe }}
         <img src='data:image/png;base64,{{ colourbar | safe }}'/>
+        </div>
     {% endif %}
     </body>
 </div>

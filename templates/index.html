@@ -42,7 +42,12 @@
                 <input type="text" name="aoa" id="aoa" value="0"></div>
             <div class="col-12">
                 <input type="submit" value="Submit"></div>
+            <input type="hidden" name="width" id="width" value=width>
         </form>
+        <script>
+            let width = window.innerWidth
+            document.getElementById("width").value = width
+        </script>
         <h1>MachFlow 2022</h1>
 
         <p>

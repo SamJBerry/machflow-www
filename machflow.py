@@ -7,13 +7,13 @@ from io import BytesIO
 import meshio
 import pyvista as pv
 import werkzeug.exceptions
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, flash, redirect
 from ipywidgets.embed import embed_snippet
 from werkzeug.utils import secure_filename
 from network import load_stl, load_model, predict
 
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'stl'}
+ALLOWED_EXTENSIONS = ('stl')
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -58,11 +58,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-class FileNotAllowed(werkzeug.exceptions.HTTPException):
-    code = 406
-    description = f"The request file is not in the allowed extension list: {ALLOWED_EXTENSIONS}"
-
-
 class OOM(werkzeug.exceptions.HTTPException):
     code = 503
     description = "The server is out of memory due to excessive load. Please try again later"
@@ -83,8 +78,12 @@ def index():
             stl_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(stl_file)
             app.logger.info(f"File uploaded: {file.filename}")
+        elif request.files['file'].filename != "":
+            flash(f"Uploaded file is not of types: {ALLOWED_EXTENSIONS}")
+            return redirect("/")
         else:
-            raise FileNotAllowed()
+            flash("Select a sample or load your own!")
+            return redirect("/")
 
         data = load_stl(stl_file, int(request.form['aoa']))
         model = load_model()
@@ -99,7 +98,7 @@ def index():
         cp = pred.cpu().detach().float().numpy()[:, 0]
         mesh = meshio.read(stl_file)
         mesh.point_data['Cp'] = cp
-        pl = pv.Plotter(off_screen=True)
+        pl = pv.Plotter(off_screen=True, window_size=[256, 256])
         plane = [[-5.0, 0.0, 5.0], [-5.0, 0.0, -5.0], [5.0, 0.0, -5.0], [5.0, 0.0, 5.0]]
         plane_mesh = pv.PolyData(plane).delaunay_2d()
         pl.add_mesh(plane_mesh, opacity=0.5)

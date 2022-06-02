@@ -9,9 +9,19 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Mach Flow</title>
+        <title>Mach Flow - Sam Berry 2022</title>
     </head>
     <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <b>Errors:</b>
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     {% block inputs %}
         <form action="/" method="POST" enctype="multipart/form-data"
               class="row row-cols-lg-auto g-3 align-items-center">
@@ -68,11 +78,11 @@
     {% if result %}
         <b>Prediction made in {{ prediction_time|round(2) }} secs.</b>
         <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU
-            node would likely take {{ prediction_time|round(2) * 85 }} secs to
-            converge</p>
+            node would likely take 5 minutes to
+            converge around 3,000 times slower!</p>
         {{ snippet | safe }}
         <img src='data:image/png;base64,{{ colourbar | safe }}'/>
     {% endif %}
-</body>
+    </body>
 </div>
 </html>

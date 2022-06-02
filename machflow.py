@@ -35,6 +35,7 @@ except OSError:
 
 def render_colourbar(limits, width=512):
     pl = pv.Plotter(window_size=[width, int(width/4)], off_screen=True)
+    pl.set_background("#eeeeee")
 
     # Need to add an arbitrary mesh to create the color bar
     plane = [[-5.0, 0.0, 5.0], [-5.0, 0.0, -5.0], [5.0, 0.0, -5.0], [5.0, 0.0, 5.0]]
@@ -43,7 +44,7 @@ def render_colourbar(limits, width=512):
     pl.clear()  # Discard mesh
 
     pl.add_scalar_bar(title="Cp", height=0.8, width=0.8, position_x=0.1, position_y=0.1, label_font_size=18,
-                      title_font_size=26)
+                      title_font_size=26, color="black")
     buf = BytesIO()
     pl.show(screenshot=buf)
     img = base64.b64encode(buf.getbuffer()).decode("ascii")
@@ -107,6 +108,7 @@ def index():
         plane_mesh = pv.PolyData(plane).delaunay_2d()
         pl.add_mesh(plane_mesh, opacity=0.5)
         pl.add_mesh(mesh)
+        pl.set_background("#eeeeee")
         pythreejs_renderer = pl.to_pythreejs()
         snippet = embed_snippet([pythreejs_renderer])
         colourbar = render_colourbar([min(cp), max(cp)], width=plotter_size)

@@ -13,16 +13,6 @@
         <title>Mach Flow</title>
     </head>
     <body>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <b>Errors:</b>
-            <ul class=flashes>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
     {% block inputs %}
         <h1>MachFlow - Sam Berry 2022</h1>
         <p><a href="https://www.linkedin.com/in/samjberry/">Linkedin</a> <a
@@ -85,6 +75,16 @@
         </ul>
         </p>
     {% endblock %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <b>Errors:</b>
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     {% if result %}
         <b>Prediction made in {{ prediction_time|round(2) }} secs! (The plot below is interactive)</b>
         <p>If the NN was loaded on a GPU it would take less than 0.2secs. A well configured RANS solver on a 40 core CPU

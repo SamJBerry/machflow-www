@@ -73,6 +73,11 @@ def index():
     if request.method == 'POST':
         window_width = int(request.form['width'])
         pre_selected = request.form['pre_file']
+        try:
+            aoa = int(request.form['aoa'])
+        except ValueError:
+            flash("AoA must be a number!")
+            return redirect("/")
         if pre_selected != "0":
             stl_file = "static/pre_selected/" + pre_selected
             app.logger.info(f"Using existing stl: {stl_file}")
@@ -89,7 +94,7 @@ def index():
             flash("Select a sample or load your own!")
             return redirect("/")
 
-        data = load_stl(stl_file, int(request.form['aoa']))
+        data = load_stl(stl_file, aoa)
         model = load_model()
         tick = time()
         try:
